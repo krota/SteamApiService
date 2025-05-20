@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SteamApiService.Models;
+namespace SteamApiService.Models.Steam;
 
 public class SteamPlayerCountResponse
 {

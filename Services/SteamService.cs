@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
-using SteamApiService.Models;
+using SteamApiService.Models.Steam;
 using SteamApiService.Settings;
 
 namespace SteamApiService.Services;
@@ -21,7 +21,7 @@ public class SteamService(HttpClient httpClient, IOptions<SteamSettings> setting
         return playerCountResponse == null ? 0 : playerCountResponse.Response.PlayerCount;
     }
 
-    public async Task<List<SteamGameNewsItem>?> GetNewsAsync(int steamAppId = 671860)
+    public async Task<List<SteamGameNewsItem>?> GetNewsAsync(int steamAppId)
     {
         // https://api.steampowered.com/ISteamNews/GetNewsForApp/v0002/?appid=671860&count=3&format=json
         var apiUrl = settings.Value.ApiUrlBase + settings.Value.NewsApiUri +
@@ -31,13 +31,13 @@ public class SteamService(HttpClient httpClient, IOptions<SteamSettings> setting
         response.EnsureSuccessStatusCode();
         
         var rawJson = await response.Content.ReadAsStringAsync();
-        var newsResponse = JsonSerializer.Deserialize<SteamGameNewsResponse>(rawJson);
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        var newsResponse = JsonSerializer.Deserialize<SteamGameNewsResponse>(rawJson, options);
 
         return newsResponse?.NewsData?.NewsItems ?? [];
-    }
-
-    public async Task<SteamGameStats> GetStatsAsync(int steamAppId)
-    {
-        return null;
     }
 }

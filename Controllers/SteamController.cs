@@ -8,24 +8,17 @@ namespace SteamApiService.Controllers;
 [Route("api/[controller]")]
 public class SteamController(ISteamService service) : ControllerBase
 {
-    [HttpGet("news")]
-    public async Task<IActionResult> GetNewsAsync()
+    [HttpGet("news/{steamAppId:int}")]
+    public async Task<IActionResult> GetNewsAsync(int steamAppId)
     {
-        var news = await service.GetNewsAsync();
+        var news = await service.GetNewsAsync(steamAppId);
         return Ok(news);
     }
     
-    [HttpGet("stats")]
-    public async Task<IActionResult> GetStatsAsync()
+    [HttpGet("players/{steamAppId:int}")]
+    public async Task<IActionResult> GetCurrentPlayerCountAsync(int steamAppId)
     {
-        var stats = await service.GetStatsAsync();
-        return Ok(stats);
-    }
-    
-    [HttpGet("players")]
-    public async Task<IActionResult> GetCurrentPlayerCountAsync()
-    {
-        var count = await service.GetCurrentPlayerCountAsync();
+        var count = await service.GetCurrentPlayerCountAsync(steamAppId);
         return Ok(count);
     }
 }

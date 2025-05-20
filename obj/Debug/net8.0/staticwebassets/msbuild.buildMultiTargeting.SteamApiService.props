@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../build/SteamApiService.props" />
-</Project>
