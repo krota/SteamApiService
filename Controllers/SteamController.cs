@@ -9,9 +9,9 @@ namespace SteamApiService.Controllers;
 public class SteamController(ISteamService service) : ControllerBase
 {
     [HttpGet("news/{steamAppId:int}")]
-    public async Task<IActionResult> GetNewsAsync(int steamAppId)
+    public async Task<IActionResult> GetNewsAsync(int steamAppId, [FromQuery] int count = 3)
     {
-        var news = await service.GetNewsAsync(steamAppId);
+        var news = await service.GetNewsAsync(steamAppId, count);
         return Ok(news);
     }
     

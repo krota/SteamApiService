@@ -1,13 +1,14 @@
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using SteamApiService.Utils.Json;
+using static System.Text.RegularExpressions.Regex;
 
 namespace SteamApiService.Models.Steam;
 
 public class SteamGameNewsResponse
 {
     [JsonPropertyName("appnews")]
-    public SteamGameNewsData? NewsData { get; set; }
+    public SteamGameNewsData? NewsData { get; init; }
 }
 
 public class SteamGameNewsData
@@ -33,14 +34,14 @@ public class SteamGameNewsItem
     [JsonPropertyName("contents")]
     public string? Contents { get; set; }
     [JsonPropertyName("contentsHtml")]
-    public string? SanitizedContents =>
+    public string? ContentsHtml =>
         Contents == null
             ? null
             : ConvertSteamBbCodeToHtml(Contents);
     [JsonPropertyName("feedlabel")]
     public string? FeedLabel { get; set; }
     [JsonPropertyName("date")]
-    [JsonConverter(typeof(UnixToDateTimeConverter))]
+    [JsonConverter(typeof(UnixToDateTimeConverter))] // not currenly working
     public DateTime Date { get; set; }
     [JsonPropertyName("feedname")]
     public string? Feedname { get; set; }
@@ -59,30 +60,30 @@ public class SteamGameNewsItem
         sanitized = sanitized.Replace("\\n", "\n");
 
         // Convert BBCode-style tags to HTML
-        sanitized = Regex.Replace(
+        sanitized = Replace(
             sanitized,
             @"\[url=(.*?)\](.*?)\[/url\]",
             "<a href=\"$1\" target=\"_blank\" rel=\"noopener\">$2</a>",
             RegexOptions.IgnoreCase
         );
-        sanitized = Regex.Replace(sanitized, @"\[h2\](.*?)\[/h2\]", "<h2>$1</h2>", RegexOptions.IgnoreCase);
-        sanitized = Regex.Replace(sanitized, @"\[list\]", "<ul>", RegexOptions.IgnoreCase);
-        sanitized = Regex.Replace(sanitized, @"\[/list\]", "</ul>", RegexOptions.IgnoreCase);
-        sanitized = Regex.Replace(sanitized, @"\[\*\]", "<li>", RegexOptions.IgnoreCase);
+        sanitized = Replace(sanitized, @"\[h2\](.*?)\[/h2\]", "<h2>$1</h2>", RegexOptions.IgnoreCase);
+        sanitized = Replace(sanitized, @"\[list\]", "<ul>", RegexOptions.IgnoreCase);
+        sanitized = Replace(sanitized, @"\[/list\]", "</ul>", RegexOptions.IgnoreCase);
+        sanitized = Replace(sanitized, @"\[\*\]", "<li>", RegexOptions.IgnoreCase);
 
         // Replace Steam image tag
-        sanitized = Regex.Replace(
+        sanitized = Replace(
             sanitized,
             @"\{STEAM_CLAN_IMAGE\}\/(\S+)",
             "<img src=\"https://clan.cloudflare.steamstatic.com/images/$1\" alt=\"Steam Image\" style=\"max-width:100%; height:auto;\">"
         );
 
         // Paragraph and line breaks
-        sanitized = Regex.Replace(sanitized, @"\n\s*\n", "<br><br>");
-        sanitized = Regex.Replace(sanitized, @"\n", "<br>");
+        sanitized = Replace(sanitized, @"\n\s*\n", "<br><br>");
+        sanitized = Replace(sanitized, @"\n", "<br>");
 
         // Strip remaining BBCode tags
-        sanitized = Regex.Replace(sanitized, @"\[(\/?)(b|i|u|img|list|\*|h[1-6])\]", "", RegexOptions.IgnoreCase);
+        sanitized = Replace(sanitized, @"\[(\/?)(b|i|u|img|list|\*|h[1-6])\]", "", RegexOptions.IgnoreCase);
 
         return sanitized.Trim();
     }

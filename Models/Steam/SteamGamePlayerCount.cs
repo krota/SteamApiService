@@ -5,7 +5,7 @@ namespace SteamApiService.Models.Steam;
 public class SteamPlayerCountResponse
 {
     [JsonPropertyName("response")]
-    public SteamPlayerCountData Response { get; set; }
+    public SteamPlayerCountData Response { get; init; }
 }
 
 public class SteamPlayerCountData

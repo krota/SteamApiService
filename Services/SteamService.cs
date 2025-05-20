@@ -9,9 +9,7 @@ public class SteamService(HttpClient httpClient, IOptions<SteamSettings> setting
 {
     public async Task<int> GetCurrentPlayerCountAsync(int steamAppId)
     {
-        // https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?format=json&appid=671860
-        var apiUrl = settings.Value.ApiUrlBase + settings.Value.UserStatsApiUri +
-                     "/GetNumberOfCurrentPlayers/v1/?format=json&appid=" + steamAppId;
+        var apiUrl = $"{settings.Value.ApiUrlBase}{settings.Value.UserStatsApiUri}/GetNumberOfCurrentPlayers/v1/?format=json&appid={steamAppId}";
         var response = await httpClient.GetAsync(apiUrl);
         response.EnsureSuccessStatusCode();
         
@@ -21,11 +19,9 @@ public class SteamService(HttpClient httpClient, IOptions<SteamSettings> setting
         return playerCountResponse == null ? 0 : playerCountResponse.Response.PlayerCount;
     }
 
-    public async Task<List<SteamGameNewsItem>?> GetNewsAsync(int steamAppId)
+    public async Task<List<SteamGameNewsItem>?> GetNewsAsync(int steamAppId, int count = 3)
     {
-        // https://api.steampowered.com/ISteamNews/GetNewsForApp/v0002/?appid=671860&count=3&format=json
-        var apiUrl = settings.Value.ApiUrlBase + settings.Value.NewsApiUri +
-                     "/GetNewsForApp/v0002?format=json&appid=" + steamAppId;
+        var apiUrl = $"{settings.Value.ApiUrlBase}{settings.Value.NewsApiUri}/GetNewsForApp/v0002?format=json&appid={steamAppId}&count={count}";
         Console.WriteLine(apiUrl);
         var response = await httpClient.GetAsync(apiUrl);
         response.EnsureSuccessStatusCode();
