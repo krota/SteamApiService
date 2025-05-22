@@ -1,7 +1,6 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using SteamApiService.Services;
 using SteamApiService.Settings;
+using SteamApiService.Utils.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +9,7 @@ builder.Services.AddHttpClient<ISteamService, SteamService>();
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
     {
-        options.SerializerSettings.ContractResolver = new DefaultContractResolver
-        {
-            NamingStrategy = new CamelCaseNamingStrategy()
-        };
+        options.SerializerSettings.ContractResolver = new SnakeCaseToCamelCaseResolver();
     });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

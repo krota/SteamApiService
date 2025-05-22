@@ -1,4 +1,4 @@
-using System.Text.Json;
+using Newtonsoft.Json;
 using Microsoft.Extensions.Options;
 using SteamApiService.Models.Steam;
 using SteamApiService.Settings;
@@ -14,8 +14,8 @@ public class SteamService(HttpClient httpClient, IOptions<SteamSettings> setting
         response.EnsureSuccessStatusCode();
         
         var rawJson = await response.Content.ReadAsStringAsync();
-        var playerCountResponse = JsonSerializer.Deserialize<SteamPlayerCountResponse>(rawJson);
-
+        var playerCountResponse = JsonConvert.DeserializeObject<SteamPlayerCountResponse>(rawJson);
+        
         return playerCountResponse == null ? 0 : playerCountResponse.Response.PlayerCount;
     }
 
@@ -27,13 +27,8 @@ public class SteamService(HttpClient httpClient, IOptions<SteamSettings> setting
         response.EnsureSuccessStatusCode();
         
         var rawJson = await response.Content.ReadAsStringAsync();
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
+        var newsResponse = JsonConvert.DeserializeObject<SteamGameNewsResponse>(rawJson);
 
-        var newsResponse = JsonSerializer.Deserialize<SteamGameNewsResponse>(rawJson, options);
-
-        return newsResponse?.NewsData?.NewsItems ?? [];
+        return newsResponse?.AppNews?.NewsItems ?? [];
     }
 }

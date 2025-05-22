@@ -1,19 +1,21 @@
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using SteamApiService.Utils.Json;
+using System.Text.RegularExpressions;
 using static System.Text.RegularExpressions.Regex;
 
 namespace SteamApiService.Models.Steam;
 
 public class SteamGameNewsResponse
 {
-    [JsonPropertyName("appnews")]
-    public required SteamGameNewsData NewsData { get; init; }
+    [JsonProperty("appnews")]
+    public required SteamGameNewsData AppNews { get; init; }
 }
 
 public class SteamGameNewsData
 {
+    [JsonProperty("appid")]
     public int AppId { get; set; }
+    [JsonProperty("newsitems")]
     public List<SteamGameNewsItem>? NewsItems { get; set; }
 }
 
@@ -22,6 +24,7 @@ public class SteamGameNewsItem
     public string? Gid { get; set; }
     public string? Title { get; set; }
     public string? Url { get; set; }
+    [JsonProperty("is_external_url")]
     public bool IsExternalUrl { get; set; }
     public string? Author { get; set; }
     public string? Contents { get; set; }
@@ -30,9 +33,10 @@ public class SteamGameNewsItem
             ? null
             : ConvertSteamBbCodeToHtml(Contents);
     public string? FeedLabel { get; set; }
-    [JsonConverter(typeof(UnixToDateTimeConverter))]
+    [Newtonsoft.Json.JsonConverter(typeof(UnixToDateTimeConverter))]
     public DateTime Date { get; set; }
     public string? Feedname { get; set; }
+    [JsonProperty("feed_type")]
     public int FeedType { get; set; }
     public int AppId { get; set; }
     
