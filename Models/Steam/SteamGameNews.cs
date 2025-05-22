@@ -8,46 +8,32 @@ namespace SteamApiService.Models.Steam;
 public class SteamGameNewsResponse
 {
     [JsonPropertyName("appnews")]
-    public SteamGameNewsData? NewsData { get; init; }
+    public required SteamGameNewsData NewsData { get; init; }
 }
 
 public class SteamGameNewsData
 {
-    [JsonPropertyName("appid")]
     public int AppId { get; set; }
-    [JsonPropertyName("newsitems")]
     public List<SteamGameNewsItem>? NewsItems { get; set; }
 }
 
 public class SteamGameNewsItem
 {
-    [JsonPropertyName("gid")]
     public string? Gid { get; set; }
-    [JsonPropertyName("title")]
     public string? Title { get; set; }
-    [JsonPropertyName("url")]
     public string? Url { get; set; }
-    [JsonPropertyName("is_external_url")]
     public bool IsExternalUrl { get; set; }
-    [JsonPropertyName("author")]
     public string? Author { get; set; }
-    [JsonPropertyName("contents")]
     public string? Contents { get; set; }
-    [JsonPropertyName("contentsHtml")]
     public string? ContentsHtml =>
         Contents == null
             ? null
             : ConvertSteamBbCodeToHtml(Contents);
-    [JsonPropertyName("feedlabel")]
     public string? FeedLabel { get; set; }
-    [JsonPropertyName("date")]
-    [JsonConverter(typeof(UnixToDateTimeConverter))] // not currenly working
+    [JsonConverter(typeof(UnixToDateTimeConverter))]
     public DateTime Date { get; set; }
-    [JsonPropertyName("feedname")]
     public string? Feedname { get; set; }
-    [JsonPropertyName("feed_type")]
     public int FeedType { get; set; }
-    [JsonPropertyName("appid")]
     public int AppId { get; set; }
     
     private static string ConvertSteamBbCodeToHtml(string raw)
